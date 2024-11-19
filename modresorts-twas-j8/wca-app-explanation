@@ -1,0 +1,83 @@
+# Executive summary of important application functionalities
+Project is a web-based application that provides a range of functionalities related to online reservation and management. The application has a homepage that welcomes users, an availability checker that allows users to check the availability of a reservation for a specific date, a weather information provider that provides real-time weather information for a given city, and a logout feature that invalidates user sessions. The application also has a series of filters that can be used to intercept and modify requests and responses before they are sent to the target resource.
+
+After analysis we have found following services: 
+	1. class: com.acme.modres.SecondFilter method: doFilter
+	2. class: com.acme.modres.FirstFilter method: doFilter
+	3. class: com.acme.modres.LogoutServlet method: doGet
+	4. class: com.acme.modres.AvailabilityCheckerServlet method: doGet
+	5. class: com.acme.modres.WelcomeServlet method: doGet
+	6. class: com.acme.modres.WeatherServlet method: doGet
+	7. class: com.acme.modres.UpperServlet method: doGet.
+We will summarize the functionality of each of them below.
+
+## Summary of service with entry method: doFilter in class: com.acme.modres.SecondFilter
+The purpose of the SecondFilter app is to intercept and modify the request and response objects before they are sent to the target resource. The filter reads the request body and appends the string " to our site!"to it, before sending it on to the target resource. The filter also sets the content type of the response to text/plain.
+The input to the SecondFilter app is the servlet request and response objects, as well as the filter chain. The output is the modified request and response objects, as well as any other actions performed by the filter chain.
+The doFilter method utilizes the BufferedReader and PrintWriter classes to read and write the request body and set the response content type, respectively. The filter then appends the string " to our site!"to the request body and sends it on to the filter chain. Finally, the filter chain processes the request and response, and the modified request and response objects are returned to the client.
+## Summary of service with entry method: doFilter in class: com.acme.modres.FirstFilter
+The purpose of the `FirstFilter` app is to filter requests and add a default user name to the request if no user name is provided. The filter adds a welcome message to the response and then passes the request on to the next filter in the chain.
+**Input and Output:**
+The input to the `FirstFilter` app is a servlet request and response, as well as a filter chain. The output is a filtered response with a welcome message and the default user name (or the provided user name) in the response body.
+**Methodology:**
+The `doFilter` method of the `FirstFilter` app:
+1. Retrieves the user name from the request parameter `user`.
+2. If the user name is null, sets the user name to "defaultUser".
+3. Adds a welcome message to the response with the user name.
+4. Passes the request and response to the next filter in the chain.
+## Summary of service with entry method: doGet in class: com.acme.modres.LogoutServlet
+### Business Purpose
+The `LogoutServlet` app is used to log users out of their WSO2 Identity Server sessions by invalidating their SSO cookies. It is crucial for the security of the system to log users out when they are no longer required to prevent unauthorized access.
+### Input and Output
+- **Input**: The `LogoutServlet` app takes in a `HttpServletRequest` and `HttpServletResponse` object to process the logout request.
+- **Output**: The `LogoutServlet` app redirects the user to the login page after logging them out, and the SSO cookies are revoked.
+### Methodology
+1. `doGet` method: This method is used to handle HTTP GET requests to the `/logout` URL.
+2. `WSSecurityHelper.revokeSSOCookies` method: This method is used to revoke the SSO cookies of the user by setting their expiration dates to the past.
+3. `response.sendRedirect` method: This method is used to redirect the user to the login page after logging them out.
+## Summary of service with entry method: doGet in class: com.acme.modres.AvailabilityCheckerServlet
+AvailabilityCheckerServlet is a Java servlet that provides availability information for a specific date. The purpose of this servlet is to check the availability of a reservation on a specific date and return the result to the client in JSON format.
+doGet method:
+- The doGet method of the AvailabilityCheckerServlet class is the main method of the servlet, which is called when an HTTP GET request is received.
+- It retrieves the selected date from the request parameters and passes it to the setSelectedDate method of the ReservationCheckerData class.
+- It then starts a new thread, DateChecker, which checks the availability of the reservation for the selected date.
+- The servlet waits for the DateChecker thread to finish using the join method.
+- If the availability is found to be false, the servlet sets the status code to 201 (Created). Otherwise, it sets the status code to 200 (OK).
+- The servlet then returns a JSON response with the availability status to the client.
+Methodology:
+- The doGet method retrieves the selected date from the request parameters and passes it to the setSelectedDate method of the ReservationCheckerData class.
+- It then starts a new thread, DateChecker, which checks the availability of the reservation for the selected date.
+- The servlet waits for the DateChecker thread to finish using the join method.
+- The servlet then returns a JSON response with the availability status to the client.
+## Summary of service with entry method: doGet in class: com.acme.modres.WelcomeServlet
+WelcomeServlet is a simple servlet that prints "Enjoy!" on the browser when a GET request is made to the homepage.
+The purpose of this servlet is to simply print a message to the user, so that they can have a sense of accomplishment. The business utility of this servlet is to simply provide a platform for users to express their gratitude and appreciation for the service they have received.
+The input to WelcomeServlet is the HTTP request object (HttpServletRequest request) and the output is the HTTP response object (HttpServletResponse response). The doGet method of WelcomeServlet writes the string "Enjoy!"to the response object, which is then sent back to the client as a response.
+The functional summary of WelcomeServlet includes the following steps:
+1. The doGet method of WelcomeServlet is called when a GET request is made to the homepage.
+2. The response object is set to the content type "text/plain", which indicates that the response will contain plain text.
+3. A PrintWriter object is obtained from the response object, and the string "Enjoy!" is written to the response using the println method.
+4. The response object is flushed and closed, and the servlet ends.
+## Summary of service with entry method: doGet in class: com.acme.modres.WeatherServlet
+1. Business purpose:
+The WeatherServlet app is a Java servlet that provides weather information to users. The app utilizes a third-party weather API to retrieve real-time weather information for a given city, and returns the information to the user in JSON format.
+2. Input and Output:
+Input:
+The WeatherServlet app takes in a request from a user, which includes the name of the city for which weather information is requested.
+Output:
+The WeatherServlet app returns weather information for the requested city in JSON format.
+3. Methodology:
+The WeatherServlet app utilizes the doGet method to handle HTTP GET requests from users. The doGet method retrieves the weather information from a third-party weather API, which is then returned to the user in JSON format.
+The getRealTimeWeatherData method is responsible for making the API call and retrieving the weather information. If the weather API key is found, the app uses the real-time weather information. If the key is not found, the app uses default weather information.
+The getDefaultWeatherData method provides default weather information in the event that the weather API is not available. The method reads the default weather information from a JSON file and returns it to the user.
+The DefaultWeatherData class provides the default weather information for a given city. The class reads the information from a JSON file and returns it to the WeatherServlet app.
+## Summary of service with entry method: doGet in class: com.acme.modres.UpperServlet
+UpperServlet app is a simple Servlet application that capitalizes the input string and returns it to the user. The purpose of this app is to demonstrate the use of request parameters and response writing in Servlets.
+The doGet method of UpperServlet takes an input string from the request parameter "input" and capitalizes it using the toUpperCase method. The capitalized string is then encoded using the ResponseUtils class and written to the response as HTML.
+Input: The input to UpperServlet is a string provided by the user in the form of a URL parameter.
+Output: The output of UpperServlet is a capitalized version of the input string, encoded as HTML and displayed in the browser.
+Methodology: The doGet method of UpperServlet utilizes the following methods of the HttpServletResponse and HttpServletRequest classes to read the input string, capitalize it, encode it as HTML, and write it to the response:
+1. getParameter: Retrieves the value of a request parameter as a String.
+2. toUpperCase: Converts the specified string to uppercase.
+3. encodeDataString: Encodes the specified string for use in an HTML document.
+4. getWriter: Returns a PrintWriter object that can be used to write text to the response.
